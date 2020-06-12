@@ -11,7 +11,7 @@ class SSSpider(scrapy.Spider):
 
     ## Xpaths
     TITLE = "//h1/text()"
-    ABSTRACT = "//div[@class='text-truncator abstract__text text--preline']/text()"
+    ABSTRACT = "//span[@class='text-truncator abstract__text text--preline']//text()"
     YEAR = "//span[@data-selenium-selector='paper-year']/span/span/text()"
     AUTHORS = "//span[@class='author-list']//span/a/span/span/text()"
     REFERENCES = "//div[@class='citation-list__citations']//div/div/h2/a/@href"
@@ -22,7 +22,6 @@ class SSSpider(scrapy.Spider):
 
         self.root = root
         self.max_num = max_num
-        self.counter = 0
 
 
     def start_requests(self):
@@ -31,13 +30,12 @@ class SSSpider(scrapy.Spider):
 
 
     def parse(self, response):
-        if response.status == 200 and self.counter < self.max_num:
-            self.counter += 1
+        if response.status == 200 and len(self.crawled) < self.max_num:
             url = response.url
             item = {
                 'id': url.split('/')[-1],
                 'title': response.xpath(self.TITLE).get(),
-                'abstract': response.xpath(self.ABSTRACT).extract_first(),
+                'abstract': ''.join(response.xpath(self.ABSTRACT).getall()),
                 'year': response.xpath(self.YEAR).get(),
                 'authors': response.xpath(self.AUTHORS).getall(),
                 'references': [base_url + ref for ref in response.xpath(self.REFERENCES).getall()]
@@ -46,5 +44,8 @@ class SSSpider(scrapy.Spider):
             self.crawled.update([url])
             
             for ref in item['references']:
-                if ref not in self.crawled:
-                    yield scrapy.Request(url=base_url + ref, callback=self.parse)
+                if ref not in self.crawled and len(self.crawled) < self.max_num:
+                    yield scrapy.Request(url=ref, callback=self.parse)
+                else:
+                    return
+        return
