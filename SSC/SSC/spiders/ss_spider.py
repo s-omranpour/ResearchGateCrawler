@@ -11,7 +11,7 @@ class SSSpider(scrapy.Spider):
 
     ## Xpaths
     TITLE = "//h1/text()"
-    ABSTRACT = "//span[@class='text-truncator abstract__text text--preline']//text()"
+    ABSTRACT = "//meta[@name='description']/@content"
     YEAR = "//span[@data-selenium-selector='paper-year']/span/span/text()"
     AUTHORS = "//span[@class='author-list']//span/a/span/span/text()"
     REFERENCES = "//div[@class='citation-list__citations']//div/div/h2/a/@href"
@@ -35,7 +35,7 @@ class SSSpider(scrapy.Spider):
             item = {
                 'id': url.split('/')[-1],
                 'title': response.xpath(self.TITLE).get(),
-                'abstract': ''.join(response.xpath(self.ABSTRACT).getall()),
+                'abstract': response.xpath(self.ABSTRACT).get(),
                 'year': response.xpath(self.YEAR).get(),
                 'authors': response.xpath(self.AUTHORS).getall(),
                 'references': [base_url + ref for ref in response.xpath(self.REFERENCES).getall()]
