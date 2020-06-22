@@ -16,7 +16,7 @@ class SSSpider(scrapy.Spider):
     AUTHORS = "//span[@class='author-list']//span/a/span/span/text()"
     REFERENCES = "//div[@class='citation-list__citations']//div/div/h2/a/@href"
 
-    def __init__(self, start_urls=urls, max_num=10, root='data/'):
+    def __init__(self, start_urls=urls, max_num=2000, root='data/'):
         self.crawled = set()
         self.urls = start_urls
 
