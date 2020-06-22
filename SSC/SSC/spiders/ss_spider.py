@@ -13,7 +13,8 @@ class SSSpider(scrapy.Spider):
     TITLE = "//h1/text()"
     ABSTRACT = "//meta[@name='description']/@content"
     YEAR = "//span[@data-selenium-selector='paper-year']/span/span/text()"
-    AUTHORS = "//span[@class='author-list']//span/a/span/span/text()"
+    AUTHORS = "//meta[@name='citation_author']/@content"
+    # AUTHORS = "//span[@class='author-list']//span/a/span/span/text()"
     REFERENCES = "//div[@class='citation-list__citations']//div/div/h2/a/@href"
 
     def __init__(self, start_urls=urls, max_num=2000, root='data/'):
