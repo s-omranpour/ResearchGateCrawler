@@ -19,7 +19,7 @@ class SSSpider(scrapy.Spider):
     # AUTHORS = "//span[@class='author-list']//span/a/span/span/text()"
     REFERENCES = "//div[@class='citation-list__citations']//div/div/h2/a/@href"
 
-    def __init__(self, start_urls=urls, max_num=9, root='data/'):
+    def __init__(self, start_urls=urls, max_num=2000, root='data/'):
         self.queue = []
         self.crawled = set()
         self.urls = start_urls
@@ -52,7 +52,7 @@ class SSSpider(scrapy.Spider):
 
 
 
-            for ref in item['references'][:3]:
+            for ref in item['references']:
                 if ref not in self.queue and ref not in self.crawled and len(self.queue) + len(self.crawled) <= self.max_num:
                     self.queue.append(ref)
 
